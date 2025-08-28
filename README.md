@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
+# Book Finder App
 
-## Project info
+A comprehensive book search application built for college students to discover books across various categories and search types using the Open Library API.
 
-**URL**: https://lovable.dev/projects/b4f32e50-cdbb-49ce-b035-f7bdd09c86b9
+##  User Persona
 
-## How can I edit this code?
+**Alex - College Student**
+- Needs to search for academic textbooks, research materials, and leisure reading
+- Wants multiple ways to discover books (by title, author, subject)
+- Values quick access to full-text resources and book metadata
+- Prefers clean, distraction-free interfaces for research
 
-There are several ways of editing your application.
+##  Features
 
-**Use Lovable**
+### Core Functionality
+- **Multiple Search Types**: Title, Author, Subject, and comprehensive "All" search
+- **Advanced Filtering**: Search within specific categories (Academic, Fiction, Non-Fiction, Professional)
+- **Rich Book Information**: Cover images, publication details, page count, edition count
+- **Full-Text Indicators**: Visual badges showing books with available full-text access
+- **Responsive Design**: Optimized for both desktop and mobile devices
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b4f32e50-cdbb-49ce-b035-f7bdd09c86b9) and start prompting.
+### Student-Focused Features
+- **Academic Categories**: Quick access to textbooks and academic resources
+- **Subject-Based Search**: Find books by academic subjects like "Computer Science", "Psychology"
+- **Publisher Information**: Identify textbook publishers and academic sources
+- **Edition Tracking**: See multiple editions available for textbooks
 
-Changes made via Lovable will be committed automatically to this repo.
+##  Technology Stack
 
-**Use your preferred IDE**
+- **Frontend Framework**: React with TypeScript
+- **Styling**: Tailwind CSS for responsive design
+- **State Management**: React's built-in useState and useEffect hooks
+- **API**: Open Library Search API (no authentication required)
+- **Icons**: Lucide React for consistent iconography
+- **Deployment**: Ready for CodeSandbox, StackBlitz, or similar platforms
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+##  Project Structure
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```
+src/
+├── components/
+│   ├── BookCard.tsx          # Individual book display component
+│   ├── SearchBar.tsx         # Search input with filters
+│   ├── NoResults.tsx         # Empty state with suggestions
+│   └── LoadingSpinner.tsx    # Loading state component
+├── services/
+│   └── bookService.ts        # Open Library API integration
+├── pages/
+│   └── Index.tsx             # Main application page
+└── types/
+    └── book.ts               # TypeScript interfaces
+```
 
-Follow these steps:
+## Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd book-finder-deluxe
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b4f32e50-cdbb-49ce-b035-f7bdd09c86b9) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+4. Open [http://localhost:8080](http://localhost:8080) to view the app
