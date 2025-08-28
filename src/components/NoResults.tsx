@@ -10,11 +10,13 @@ interface NoResultsProps {
 
 export function NoResults({ query, onClear, onTryAgain }: NoResultsProps) {
   const suggestions = [
-    "Try different keywords",
+    "Try different keywords or synonyms",
     "Check your spelling",
-    "Use broader search terms",
-    "Search by author name instead",
-    "Try searching for a genre or category"
+    "Use broader search terms (e.g., 'physics' instead of 'quantum mechanics')",
+    "Search by author name in the filter",
+    "Try searching for a subject or category",
+    "Look for textbook publishers like 'Pearson' or 'McGraw Hill'",
+    "Search for classic titles if studying literature"
   ];
 
   return (
@@ -35,6 +37,9 @@ export function NoResults({ query, onClear, onTryAgain }: NoResultsProps) {
           <p className="text-muted-foreground">
             Sorry, we couldn't find any books matching{" "}
             <span className="font-medium text-foreground">"{query}"</span>
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Don't worry! Open Library has millions of books. Let's try a different search.
           </p>
         </div>
 

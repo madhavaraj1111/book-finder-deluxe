@@ -1,20 +1,30 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (query: string, searchType?: 'title' | 'author' | 'subject' | 'all') => void;
   isLoading?: boolean;
   suggestions?: string[];
   className?: string;
 }
 
+const searchTypes = [
+  { value: 'all', label: 'All', description: 'Search everything' },
+  { value: 'title', label: 'Title', description: 'Search book titles' },
+  { value: 'author', label: 'Author', description: 'Search by author name' },
+  { value: 'subject', label: 'Subject', description: 'Search by topic/subject' },
+] as const;
+
 export function SearchBar({ onSearch, isLoading = false, suggestions = [], className }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [searchType, setSearchType] = useState<'title' | 'author' | 'subject' | 'all'>('all');
+  const [showFilters, setShowFilters] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -22,15 +32,16 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
     (suggestion) => suggestion.toLowerCase().includes(query.toLowerCase()) && suggestion !== query
   ).slice(0, 5);
 
-  const handleSearch = useCallback((searchQuery: string) => {
+  const handleSearch = useCallback((searchQuery: string, type?: typeof searchType) => {
     const trimmedQuery = searchQuery.trim();
     if (trimmedQuery) {
-      onSearch(trimmedQuery);
+      onSearch(trimmedQuery, type || searchType);
       setQuery(trimmedQuery);
       setShowSuggestions(false);
       setSelectedIndex(-1);
+      setShowFilters(false);
     }
-  }, [onSearch]);
+  }, [onSearch, searchType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +67,7 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
       case "Escape":
         setShowSuggestions(false);
         setSelectedIndex(-1);
+        setShowFilters(false);
         break;
     }
   };
@@ -64,6 +76,7 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
     setQuery("");
     setShowSuggestions(false);
     setSelectedIndex(-1);
+    setShowFilters(false);
     inputRef.current?.focus();
   };
 
@@ -72,6 +85,7 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
       if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
         setSelectedIndex(-1);
+        setShowFilters(false);
       }
     };
 
@@ -87,7 +101,12 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
           <Input
             ref={inputRef}
             type="text"
-            placeholder="Search for books, authors, or topics..."
+            placeholder={
+              searchType === 'title' ? "Search book titles..." :
+              searchType === 'author' ? "Search by author..." :
+              searchType === 'subject' ? "Search by subject/topic..." :
+              "Search for books, authors, or topics..."
+            }
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -96,9 +115,20 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
             }}
             onKeyDown={handleKeyDown}
             onFocus={() => setShowSuggestions(true)}
-            className="search-input pl-12 pr-20 h-14 text-lg rounded-full border-2 focus:border-primary"
+            className="search-input pl-12 pr-32 h-14 text-lg rounded-full border-2 focus:border-primary"
             disabled={isLoading}
           />
+          
+          {/* Search Type Filter Button */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className="absolute right-20 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 rounded-full hover:bg-muted"
+          >
+            <Filter className="h-4 w-4" />
+          </Button>
           
           {query && (
             <Button
@@ -123,7 +153,39 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
         </div>
       </form>
 
-      {showSuggestions && filteredSuggestions.length > 0 && (
+      {/* Search Type Filters */}
+      {showFilters && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-elevated z-50 p-4">
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-foreground">Search Type</h4>
+            <div className="flex flex-wrap gap-2">
+              {searchTypes.map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() => {
+                    setSearchType(type.value);
+                    setShowFilters(false);
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-sm transition-colors",
+                    searchType === type.value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                  )}
+                >
+                  {type.label}
+                </button>
+              ))}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {searchTypes.find(t => t.value === searchType)?.description}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search suggestions */}
+      {showSuggestions && filteredSuggestions.length > 0 && !showFilters && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-elevated z-50 overflow-hidden">
           {filteredSuggestions.map((suggestion, index) => (
             <button
@@ -138,6 +200,21 @@ export function SearchBar({ onSearch, isLoading = false, suggestions = [], class
               {suggestion}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Active search type indicator */}
+      {searchType !== 'all' && (
+        <div className="mt-2 flex items-center gap-2">
+          <Badge variant="secondary" className="text-xs">
+            Searching by: {searchTypes.find(t => t.value === searchType)?.label}
+          </Badge>
+          <button
+            onClick={() => setSearchType('all')}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Clear filter
+          </button>
         </div>
       )}
     </div>
